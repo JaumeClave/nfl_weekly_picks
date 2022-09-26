@@ -10,10 +10,10 @@ import pytz
 
 
 # Vars
-USER = "postgres"
-PASSWORD = "Barca2011!"
-DATABASE = "nfl_weekly_picks"
-HOST = "nfl-weeklys-picks.cdd5mq5zdhsy.eu-west-2.rds.amazonaws.com"
+USER = st.secrets["postgres"]["user"]
+PASSWORD = st.secrets["postgres"]["password"]
+DATABASE = st.secrets["postgres"]["dbname"]
+HOST = st.secrets["postgres"]["host"]
 
 
 def connect_to_postgres_database(user, password, database, host="127.0.0.1", port="5432"):
