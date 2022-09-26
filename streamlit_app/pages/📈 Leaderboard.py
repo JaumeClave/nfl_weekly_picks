@@ -7,7 +7,7 @@ import psycopg2
 from psycopg2 import Error
 from sqlalchemy import create_engine
 import pytz
-
+hj
 # Var
 USER = "postgres"
 PASSWORD = "Barca2011!"
