@@ -3,7 +3,6 @@
   <component name="NewModuleRootManager">
     <orderEntry type="jdk" jdkName="Python 3.10" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="golf" />
     <orderEntry type="module" module-name="nfl_weekly_picks" />
   </component>
 </module>
