@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$USER_HOME$/Documents/Python Projects/golf/.idea/golf.iml" filepath="$USER_HOME$/Documents/Python Projects/golf/.idea/golf.iml" />
+      <module fileurl="file://$USER_HOME$/Documents/Python Projects/streamlit_live_nfl_weekly_picks/.idea/nfl_weekly_picks.iml" filepath="$USER_HOME$/Documents/Python Projects/streamlit_live_nfl_weekly_picks/.idea/nfl_weekly_picks.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/workspace.iml" filepath="$PROJECT_DIR$/.idea/workspace.iml" />
     </modules>
   </component>
