@@ -12,9 +12,9 @@ import pytz
 USER = "postgres"
 PASSWORD = "Barca2011!"
 DATABASE = "nfl_weekly_picks"
-HOST = "nfl-weekly-picks.cdd5mq5zdhsy.eu-west-2.rds.amazonaws.com"
+HOST = "nfl-weeklys-picks.cdd5mq5zdhsy.eu-west-2.rds.amazonaws.com"
 
-
+d
 def connect_to_postgres_database(user, password, database, host="127.0.0.1", port="5432"):
     """
     Function connects to a database and returns the cursor object
