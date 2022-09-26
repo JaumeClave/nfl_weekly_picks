@@ -1,7 +1,7 @@
 import streamlit as st
 import datetime
 import pandas as pd
-import nfl_data_py as nflc
+import nfl_data_py as nfl
 from PIL import Image
 import psycopg2
 from psycopg2 import Error
