@@ -6,7 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/workspace" />
       <excludeFolder url="file://$MODULE_DIR$/venv_nflweeklypicks" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.10 (venv_nflweeklypicks)" jdkType="Python SDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
