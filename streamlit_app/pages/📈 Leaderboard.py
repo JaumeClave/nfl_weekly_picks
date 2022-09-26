@@ -8,7 +8,7 @@ from psycopg2 import Error
 from sqlalchemy import create_engine
 import pytz
 
-
+# Var
 USER = "postgres"
 PASSWORD = "Barca2011!"
 DATABASE = "nfl_weekly_picks"
