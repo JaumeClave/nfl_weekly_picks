@@ -6,14 +6,13 @@ from PIL import Image
 import psycopg2
 from psycopg2 import Error
 from sqlalchemy import create_engine
-import pytz
 
 
 # Vars
-USER = st.secrets["postgres"]["user"]
-PASSWORD = st.secrets["postgres"]["password"]
-DATABASE = st.secrets["postgres"]["dbname"]
-HOST = st.secrets["postgres"]["host"]
+USER = st.secrets["USER"]
+PASSWORD = st.secrets["PASSWORD"]
+DATABASE = st.secrets["DATABASE"]
+HOST = st.secrets["HOST"]
 
 
 def connect_to_postgres_database(user, password, database, host="127.0.0.1", port="5432"):
