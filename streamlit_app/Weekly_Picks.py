@@ -10,6 +10,7 @@ import pytz
 import hashlib
 
 
+# Vars
 USER = st.secrets["USER"]
 PASSWORD = st.secrets["PASSWORD"]
 DATABASE = st.secrets["DATABASE"]
