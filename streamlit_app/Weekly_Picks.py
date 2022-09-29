@@ -47,13 +47,16 @@ def connect_to_postgres_database(user, password, database, host="127.0.0.1", por
     :return: psycopg2 cursor object
     """
     try:
+        st.write("im trying")
         con = psycopg2.connect(user=user,
                                password=password,
                                database=database,
                                host=host,
                                port=port)
         cursor = con.cursor()
+        st.write("wooo")
     except (Exception, Error) as error:
+        st.write("I've failed")
         print("Error while connecting to PostgreSQL", error)
     return con, cursor
 
