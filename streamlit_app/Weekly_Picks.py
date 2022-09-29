@@ -27,7 +27,8 @@ TEXT_REST = "rested"
 TEXT_DAYS = "days"
 TEXT_SPREAD = "Spread is"
 TEXT_SPACE = " "
-TEAM_LOGO_LOCATIONS_DF = pd.read_csv(r"C:\Users\Jaume\Documents\Python Projects\nfl_weekly_picks\data\processed\team_logo_file_locations.csv")
+TEAM_LOGO_LOCATIONS_DF = pd.read_csv(
+    r"https://github.com/JaumeClave/nfl_weekly_picks/blob/master/data/processed/team_logo_file_locations.csv")
 START_HEADER_CENTERED_HTML = "<h1 style='text-align: center;'>"
 END_HEADER_HTML_HTML = "</h1>"
 START_PARAGRAPH_HTML = "<p style='text-align: center;'>"
