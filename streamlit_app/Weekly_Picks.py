@@ -707,6 +707,7 @@ def make_submit_weekly_picks_button():
 
 ######################################### RUN #######################################
 
+st.write("hi")
 
 # Connect to DB
 con, cursor = connect_to_postgres_database(USER, PASSWORD, DATABASE, HOST, port="5432")
