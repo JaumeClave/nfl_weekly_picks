@@ -712,6 +712,7 @@ st.write("hi")
 # Connect to DB
 con, cursor = connect_to_postgres_database(USER, PASSWORD, DATABASE, HOST, port="5432")
 
+st.write("re")
 
 try:
     # User ID
