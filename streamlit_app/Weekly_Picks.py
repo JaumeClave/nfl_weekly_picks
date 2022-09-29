@@ -11,10 +11,10 @@ import hashlib
 
 
 
-USER = st.secrets["postgres"]["user"]
-PASSWORD = st.secrets["postgres"]["password"]
-DATABASE = st.secrets["postgres"]["dbname"]
-HOST = st.secrets["postgres"]["host"]
+USER = st.secrets["USER"]
+PASSWORD = st.secrets["PASSWORD"]
+DATABASE = st.secrets["DATABASE"]
+HOST = st.secrets["HOST"]
 NON_UNIQUE_USERNAME = "Username already exists. Please try again with a different one"
 NON_UNIQUE_EMAIL = "Email already exists. Please try again with a different one"
 USER_CREATION_SUCCESS_MESSAGE = "Successfully executed the command"
