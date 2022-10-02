@@ -196,7 +196,7 @@ def make_id_from_username(username):
     return returned_value[0][0]
 
 
-@st.cache(show_spinner=True)
+@st.cache(allow_output_mutation=True)
 def make_yearly_schedule(year):
     """
     Function returns a dataframe containing the provided years NFL schedule
