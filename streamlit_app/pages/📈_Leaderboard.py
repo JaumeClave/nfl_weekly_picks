@@ -165,7 +165,7 @@ try:
     st.header("Leaderboard!")\
 
     nfl_games_with_scored_df = make_database_games_with_scores_df()
-    user_games_with_scores_df = pipeline_make_insert_into_user_winning_picks_table()
+    user_games_with_scores_df = make_games_with_scores_df()
     tab_name_list = make_tab_names(nfl_games_with_scored_df)
 
     user_weekly_picks_df = user_games_with_scores_df[user_games_with_scores_df["user_id"] ==user_id]

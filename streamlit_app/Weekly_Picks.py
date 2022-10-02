@@ -577,6 +577,95 @@ def pipeline_make_insert_into_weekly_picks_table(weekly_picks_dict, user_id):
     return None
 
 
+@st.cache(allow_output_mutation=True, show_spinner=False)
+def make_database_games_with_scores_df():
+    """
+    Function queries the nfl_game_scores_2022 table and returns a Pandas DataFrame
+    :return: Dataframe
+    """
+    engine = create_engine("postgresql+psycopg2://" + USER + ":" + PASSWORD + "@" + HOST + "/" +
+                           DATABASE_NAME)
+    query = """
+         SELECT week, away_team, away_score, home_team, home_score
+         FROM nfl_game_scores_2022
+         ;
+         """
+    database_games_with_scores_df = pd.read_sql_query(query, con=engine)
+    return database_games_with_scores_df
+
+
+def make_games_with_scores_df():
+    """
+    Function creates a dataframe with a users chosen games and a flag for correct matchup pick
+    :param user_id: user id key
+    :return: Dataframe
+    """
+    engine = create_engine("postgresql+psycopg2://" + USER + ":" + PASSWORD + "@" + HOST + "/" +
+                           DATABASE_NAME)
+    query = """
+        WITH nfl_game_scores_2022 AS (
+            SELECT week, game_id,
+                CASE
+                    WHEN away_score > home_score THEN away_team
+                    WHEN away_score < home_score THEN home_team
+                    WHEN away_score = home_score THEN 'TIE'
+                END AS winning_team
+            FROM nfl_game_scores_2022
+        ),
+            user_weekly_picks AS (
+            SELECT user_id_game_id, user_id, game_id, winning_pick
+            FROM user_weekly_picks
+        ),
+            left_join_above AS (
+            SELECT usr.user_id_game_id, usr.user_id, nfl.game_id, nfl.week,
+                CASE
+                    WHEN usr.winning_pick = nfl.winning_team THEN 1
+                    WHEN usr.winning_pick != nfl.winning_team THEN 0
+                END AS correct_pick_flag
+            FROM nfl_game_scores_2022 nfl
+            LEFT JOIN user_weekly_picks usr
+                ON nfl.game_id = usr.game_id
+            WHERE usr.user_id_game_id IS NOT NULL
+        )
+         SELECT * FROM left_join_above ;
+         """
+    database_games_with_scores_df = pd.read_sql_query(query, con=engine)
+    return database_games_with_scores_df
+
+
+def make_insert_into_user_winning_picks_table(user_id_game_id, user_id, game_id, week, correct_pick_flag):
+    """
+    Function inserts picks into the winning picks table
+    :param user_id_game_id: user and game id key
+    :param user_id: user_id key
+    :param game_is:  game_id key
+    :param week: int - week
+    :param correct_pick_flag: boolean (1, 0)
+    :return: None
+    """
+    query = """
+                 INSERT INTO user_winning_picks (user_id_game_id, user_id, game_id, week, correct_pick_flag)
+                 VALUES (%s, %s, %s, %s, %s)
+                 ;
+            """
+    data_tuple = (user_id_game_id, user_id, game_id, week, correct_pick_flag)
+    cursor_execute_tuple(query, data_tuple)
+    return None
+
+
+def pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df):
+    """
+    Function pipelines the process required to insert picks into the winning picks table
+    :return: None
+    """
+    # user_games_with_scores_df = make_games_with_scores_df()
+    for index, row in user_games_with_scores_df.iterrows():
+        make_insert_into_user_winning_picks_table(row["user_id_game_id"], row["user_id"],
+                                                  row["game_id"], row["week"],
+                                                  row["correct_pick_flag"])
+    return user_games_with_scores_df
+
+
 ##################################### STREAMLIT UI ###########################################
 
 
@@ -730,6 +819,8 @@ try:
     with st.spinner('Getting the 2022 NFL schedule...'):
         yearly_schedule_2022_df = make_yearly_schedule(2022)
         pipeline_make_insert_into_nfl_game_scores_2022_table(yearly_schedule_2022_df)
+        user_games_with_scores_df = make_games_with_scores_df()
+        user_games_with_scores_df = pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df)
 
     # Get current NFL week number
     current_nfl_week_number = make_current_nfl_week_number(yearly_schedule_2022_df)
