@@ -135,8 +135,8 @@ def make_date_time():
     Function makes the current date and time
     :return: current date and time
     """
-    date_created = datetime.today().date()
-    time_created = datetime.now().time().strftime("%H:%M:%S")
+    date_created = datetime.datetime.today().date()
+    time_created = datetime.datetime.now().time().strftime("%H:%M:%S")
     return date_created, time_created
 
 

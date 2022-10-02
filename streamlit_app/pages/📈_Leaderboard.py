@@ -1,8 +1,5 @@
 import streamlit as st
-import datetime
 import pandas as pd
-import nfl_data_py as nfl
-from PIL import Image
 import psycopg2
 from psycopg2 import Error
 from sqlalchemy import create_engine
@@ -156,7 +153,6 @@ def make_tab_names(nfl_games_with_scored_df):
 
 
 ################################## STREAMLIT ###################################
-
 
 
 try:
