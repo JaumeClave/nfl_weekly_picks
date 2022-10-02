@@ -159,7 +159,7 @@ def make_tab_names(nfl_games_with_scored_df):
 
 try:
     # Connect to DB
-    con, cursor = connect_to_postgres_database(USER, PASSWORD, DATABASE, HOST, port="5432")
+    con, cursor = connect_to_postgres_database(USER, PASSWORD, DATABASE_NAME, HOST, port="5432")
 
     # User ID
     user_id = st.session_state["user_id"]
