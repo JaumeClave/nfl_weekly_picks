@@ -594,6 +594,7 @@ def make_database_games_with_scores_df():
     return database_games_with_scores_df
 
 
+@st.cache(allow_output_mutation=True, show_spinner=False)
 def make_games_with_scores_df():
     """
     Function creates a dataframe with a users chosen games and a flag for correct matchup pick
@@ -633,6 +634,7 @@ def make_games_with_scores_df():
     return database_games_with_scores_df
 
 
+@st.cache(allow_output_mutation=True, show_spinner=False)
 def make_insert_into_user_winning_picks_table(user_id_game_id, user_id, game_id, week, correct_pick_flag):
     """
     Function inserts picks into the winning picks table
@@ -653,6 +655,7 @@ def make_insert_into_user_winning_picks_table(user_id_game_id, user_id, game_id,
     return None
 
 
+@st.cache(allow_output_mutation=True, show_spinner=False)
 def pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df):
     """
     Function pipelines the process required to insert picks into the winning picks table
