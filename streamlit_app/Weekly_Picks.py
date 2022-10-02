@@ -11,10 +11,18 @@ import hashlib
 
 
 # Vars
-USER = st.secrets["USER"]
-PASSWORD = st.secrets["PASSWORD"]
-DATABASE = st.secrets["DATABASE"]
-HOST = st.secrets["HOST"]
+# USER = st.secrets["USER"]
+# PASSWORD = st.secrets["PASSWORD"]
+# DATABASE = st.secrets["DATABASE"]
+# HOST = st.secrets["HOST"]
+
+USER = "postgres"
+PASSWORD = "Barca2011!"
+DATABASE_NAME = "nfl_weekly_picks"
+HOST = "nfl-weekly-picks.cdd5mq5zdhsy.eu-west-2.rds.amazonaws.com"
+PORT = 5432
+
+
 NON_UNIQUE_USERNAME = "Username already exists. Please try again with a different one"
 NON_UNIQUE_EMAIL = "Email already exists. Please try again with a different one"
 USER_CREATION_SUCCESS_MESSAGE = "Successfully executed the command"
@@ -36,6 +44,7 @@ START_PARAGRAPH_HTML = "<p style='text-align: center;'>"
 END_PARAGRAPH_HTML = "</p>"
 
 
+@st.cache(allow_output_mutation=True)
 def connect_to_postgres_database(user, password, database, host="127.0.0.1", port="5432"):
     """
     Function connects to a database and returns the cursor object
@@ -47,16 +56,13 @@ def connect_to_postgres_database(user, password, database, host="127.0.0.1", por
     :return: psycopg2 cursor object
     """
     try:
-        st.write("im trying")
         con = psycopg2.connect(user=user,
                                password=password,
                                database=database,
                                host=host,
                                port=port)
         cursor = con.cursor()
-        st.write("wooo")
     except (Exception, Error) as error:
-        st.write("I've failed")
         print("Error while connecting to PostgreSQL", error)
     return con, cursor
 
@@ -197,7 +203,7 @@ def make_id_from_username(username):
     return returned_value[0][0]
 
 
-@st.cache(persist=True, show_spinner=False)
+@st.cache(show_spinner=True)
 def make_yearly_schedule(year):
     """
     Function returns a dataframe containing the provided years NFL schedule
@@ -209,13 +215,12 @@ def make_yearly_schedule(year):
     return yearly_schedule_2022_df
 
 
-def make_nfl_game_scores_df():
+def make_nfl_game_scores_df(nfl_schedule_df):
     """
     Function makes a dataframe containing key data for NFL games which have been played
     :return: Pandas DataFrame
     """
-    yearly_schedule_2022_df = make_yearly_schedule(2022)
-    games_with_scores_df = yearly_schedule_2022_df[(yearly_schedule_2022_df["away_score"].notna()) & (yearly_schedule_2022_df["home_score"].notna())]
+    games_with_scores_df = nfl_schedule_df[(nfl_schedule_df["away_score"].notna()) & (nfl_schedule_df["home_score"].notna())]
     games_with_scores_df = games_with_scores_df[["game_id", "week", "away_team", "away_score", "home_team", "home_score"]]
     return games_with_scores_df
 
@@ -241,12 +246,12 @@ def make_insert_into_nfl_game_scores_2022_table(game_id, week, away_team, away_s
     return None
 
 
-def pipeline_make_insert_into_nfl_game_scores_2022_table():
+def pipeline_make_insert_into_nfl_game_scores_2022_table(nfl_schedule_df):
     """
     Function pipelines the process required to add a game_id along with relevant data to the nfl_game_scores_2022 table
     :return: None
     """
-    nfl_games_with_scores_df = make_nfl_game_scores_df()
+    nfl_games_with_scores_df = make_nfl_game_scores_df(nfl_schedule_df)
     for index, row in nfl_games_with_scores_df.iterrows():
         make_insert_into_nfl_game_scores_2022_table(row["game_id"], row["week"],
                                                     row["away_team"], row["away_score"],
@@ -710,12 +715,10 @@ def make_submit_weekly_picks_button():
 
 ######################################### RUN #######################################
 
-st.write("hi")
 
 # Connect to DB
-con, cursor = connect_to_postgres_database(USER, PASSWORD, DATABASE, HOST, port="5432")
+con, cursor = connect_to_postgres_database(USER, PASSWORD, DATABASE_NAME, HOST, port="5432")
 
-st.write("re")
 
 try:
     # User ID
@@ -729,7 +732,7 @@ try:
     # Get yearly schedule
     with st.spinner('Getting the 2022 NFL schedule...'):
         yearly_schedule_2022_df = make_yearly_schedule(2022)
-        pipeline_make_insert_into_nfl_game_scores_2022_table()
+        pipeline_make_insert_into_nfl_game_scores_2022_table(yearly_schedule_2022_df)
 
     # Get current NFL week number
     current_nfl_week_number = make_current_nfl_week_number(yearly_schedule_2022_df)
