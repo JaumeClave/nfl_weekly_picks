@@ -7,6 +7,7 @@ import psycopg2
 from psycopg2 import Error
 from sqlalchemy import create_engine
 import pytz
+import requests
 import hashlib
 
 
@@ -37,7 +38,6 @@ START_PARAGRAPH_HTML = "<p style='text-align: center;'>"
 END_PARAGRAPH_HTML = "</p>"
 
 
-@st.cache(allow_output_mutation=True)
 def connect_to_postgres_database(user, password, database, host="127.0.0.1", port="5432"):
     """
     Function connects to a database and returns the cursor object
@@ -196,18 +196,19 @@ def make_id_from_username(username):
     return returned_value[0][0]
 
 
-@st.cache(allow_output_mutation=True)
+@st.cache(persist=True, show_spinner=False)
 def make_yearly_schedule(year):
     """
     Function returns a dataframe containing the provided years NFL schedule
     :param year: year of schedule desired
     :return: Pandas Dataframe
     """
-    yearly_schedule_2022_df = nfl.import_schedules([2022])
+    yearly_schedule_2022_df = nfl.import_schedules([year])
     yearly_schedule_2022_df["gameday"] = pd.to_datetime(yearly_schedule_2022_df["gameday"]).dt.date
     return yearly_schedule_2022_df
 
 
+@st.cache(persist=True, show_spinner=False)
 def make_nfl_game_scores_df(nfl_schedule_df):
     """
     Function makes a dataframe containing key data for NFL games which have been played
@@ -238,7 +239,7 @@ def make_insert_into_nfl_game_scores_2022_table(game_id, week, away_team, away_s
     cursor_execute_tuple(query, data_tuple)
     return None
 
-
+@st.cache(persist=True, show_spinner=False)
 def pipeline_make_insert_into_nfl_game_scores_2022_table(nfl_schedule_df):
     """
     Function pipelines the process required to add a game_id along with relevant data to the nfl_game_scores_2022 table
@@ -366,6 +367,7 @@ def pipeline_make_matchup_text_lists(weekly_schedule):
     return all_matchup_list
 
 
+@st.cache(persist=True, show_spinner=False, allow_output_mutation=True)
 def make_team_logo_image(team_acronym):
     """
     Function creates and Pillow image object from a specified file path loaded up from a dataframe
@@ -373,7 +375,7 @@ def make_team_logo_image(team_acronym):
     :return: Rendered image of team logo
     """
     image_location = TEAM_LOGO_LOCATIONS_DF[TEAM_LOGO_LOCATIONS_DF["team"] == team_acronym]["picture_location"].iloc[0]
-    logo = Image.open(image_location)
+    logo = Image.open(requests.get(image_location, stream=True).raw)
     return logo
 
 
@@ -562,6 +564,7 @@ def make_logical_insert_into_weekly_picks_table(weekly_picks_df):
     return None
 
 
+@st.cache(allow_output_mutation=True, show_spinner=False)
 def pipeline_make_insert_into_weekly_picks_table(weekly_picks_dict, user_id):
     """
     Function pipelines the process required to insert the weekly_picks_df into the weekly_picks table
