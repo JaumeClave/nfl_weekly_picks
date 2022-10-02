@@ -513,7 +513,8 @@ def make_current_picks_df(user_id):
     :param user_id: user_id key
     :return: Dataframe
     """
-    engine = create_engine("postgresql+psycopg2://" + USER + ":" + PASSWORD + "@" + HOST + "/" + DATABASE)
+    engine = create_engine("postgresql+psycopg2://" + USER + ":" + PASSWORD + "@" + HOST + "/" +
+                           DATABASE_NAME)
     query = """
          SELECT user_id, game_id, winning_pick
          FROM user_weekly_picks

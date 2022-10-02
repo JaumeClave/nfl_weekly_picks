@@ -61,7 +61,8 @@ def make_database_games_with_scores_df():
     Function queries the nfl_game_scores_2022 table and returns a Pandas DataFrame
     :return: Dataframe
     """
-    engine = create_engine("postgresql+psycopg2://" + USER + ":" + PASSWORD + "@" + HOST + "/" + DATABASE)
+    engine = create_engine("postgresql+psycopg2://" + USER + ":" + PASSWORD + "@" + HOST + "/" +
+                           DATABASE_NAME)
     query = """
          SELECT week, away_team, away_score, home_team, home_score
          FROM nfl_game_scores_2022
@@ -77,7 +78,8 @@ def make_games_with_scores_df():
     :param user_id: user id key
     :return: Dataframe
     """
-    engine = create_engine("postgresql+psycopg2://" + USER + ":" + PASSWORD + "@" + HOST + "/" + DATABASE)
+    engine = create_engine("postgresql+psycopg2://" + USER + ":" + PASSWORD + "@" + HOST + "/" +
+                           DATABASE_NAME)
     query = """
         WITH nfl_game_scores_2022 AS (
             SELECT week, game_id,
