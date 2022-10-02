@@ -11,8 +11,9 @@ from sqlalchemy import create_engine
 # Vars
 USER = st.secrets["USER"]
 PASSWORD = st.secrets["PASSWORD"]
-DATABASE = st.secrets["DATABASE"]
+DATABASE_NAME = st.secrets["DATABASE_NAME"]
 HOST = st.secrets["HOST"]
+PORT = st.secrets["PORT"]
 
 
 def connect_to_postgres_database(user, password, database, host="127.0.0.1", port="5432"):
