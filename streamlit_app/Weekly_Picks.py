@@ -817,7 +817,6 @@ try:
     st.markdown("{open}NFL Weekly Picks 🏈{close}".format(open=START_HEADER_CENTERED_HTML,
                                                   close=END_HEADER_HTML_HTML), unsafe_allow_html=True)
 
-
     # Get yearly schedule
     with st.spinner('Getting the 2022 NFL schedule...'):
         yearly_schedule_2022_df = make_yearly_schedule(2022)
@@ -828,22 +827,20 @@ try:
     # Get current NFL week number
     current_nfl_week_number = make_current_nfl_week_number(yearly_schedule_2022_df)
 
-
+    # Get and show current week schedule
     c1, c2, c3, c4, c5 = st.columns(5)
     with c3:
-        # Get and show current week schedule
         week_number = st.number_input("NFL Week Number", min_value=1, max_value=18,
                                       value=current_nfl_week_number, step=1)
 
-
+    # Make current weekly schedule
     week_schedule_df = make_week_schedule(yearly_schedule_2022_df, week_number)
     all_matchup_list = pipeline_make_matchup_text_lists(week_schedule_df)
     st.markdown("""---""")
 
-
+    # Display matchups
     game_day_list = list()
     weekly_picks_dict = dict()
-    # Streamlit - Display matchups
     for i in range(len(all_matchup_list)):
         game_day, game_id, home_team, away_team = make_gameday_gameid_home_away(all_matchup_list)
         game_started_flag = make_game_day_and_countdown_ui(game_day)
@@ -858,8 +855,10 @@ try:
         make_warning_two_team_matchup_win_selected()
         st.markdown("""---""")
 
+    # Submit button
     c1, c2, c3, c4, c5 = st.columns(5)
     with c3:
         make_submit_weekly_picks_button()
+
 except KeyError:
     login_and_signup_ui_app()
