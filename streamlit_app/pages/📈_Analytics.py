@@ -4,6 +4,7 @@ import psycopg2
 from psycopg2 import Error
 from sqlalchemy import create_engine
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 
 # Vars
@@ -147,6 +148,56 @@ def pipeline_make_insert_into_user_winning_picks_table():
     return user_games_with_scores_df
 
 
+def make_user_weeks_prediction_pct_df(user_id):
+    """
+    Function returns the weekly win pct rate for a specified user
+    :param user_id: user_id
+    :return: Dataframe
+    """
+    engine = create_engine("postgresql+psycopg2://" + USER + ":" + PASSWORD + "@" + HOST + "/" +
+                           DATABASE_NAME)
+    query = """SELECT week,
+                    COUNT(week) AS played_games,
+                    SUM(correct_pick_flag) AS correct_picks,
+                    (CAST(SUM(correct_pick_flag) AS float) / CAST(COUNT(week) AS float)) AS 
+                    pct_correct
+                FROM user_winning_picks
+                WHERE user_id = %(user_id)s
+                GROUP BY week
+                ORDER BY week;"""
+    user_weeks_prediction_pct_df = pd.read_sql_query(query, con=engine, params={"user_id": user_id})
+    return user_weeks_prediction_pct_df
+
+
+def make_plot_user_weeks_prediction_pct(user_weeks_prediction_pct_df):
+    """
+    Function plots a users prediction success rate and the correct number of games per week
+    :param user_weeks_prediction_pct_df: Dataframe with the weekly win pct rate for a specified user
+    :return: Plotly object
+    """
+    weeks_str = [str(x) for x in list(user_weeks_prediction_pct_df["week"])]
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+        go.Bar(x=weeks_str, y=list(user_weeks_prediction_pct_df["correct_picks"]), name="Correct Picks", marker_color="#EFEFEF"), secondary_y=False)
+    fig.add_trace(
+        go.Scatter(x=weeks_str, y=list(user_weeks_prediction_pct_df["pct_correct"]), name="Success Rate (%)", marker_color="#5CACEE"), secondary_y=True)
+    fig.update_layout(template="plotly_dark", xaxis=dict(showgrid=False), yaxis=dict(showgrid=False))
+    fig.update_yaxes(range=[0, 16], secondary_y=False, showgrid=False)
+    fig.update_yaxes(range=[0, 1], secondary_y=True, showgrid=False, tickformat=".0%")
+    return fig
+
+
+def make_pipeline_plot_user_weeks_prediction_pct(user_id):
+    """
+    Function pipelines the process required to make a plot showing pick success rate by week
+    :param user_id:
+    :return: Plotly object
+    """
+    user_weeks_prediction_pct_df = make_user_weeks_prediction_pct_df(user_id)
+    fig = make_plot_user_weeks_prediction_pct(user_weeks_prediction_pct_df)
+    return fig
+
+
 def make_tab_names(nfl_games_with_scored_df):
     """
     Function makes a list holding NFL Week numbers which have a score against them in the database
@@ -260,6 +311,9 @@ def pipeline_make_matchup_dicts_team_color_logic(nfl_games_with_scores_df, week,
         if row["game_id"] in list(user_picks_with_win_df["game_id"]):
             temp_df = user_picks_with_win_df[user_picks_with_win_df["game_id"] == row["game_id"]]
             make_team_color_logic(temp_df, away_team_color_list, home_team_color_list)
+        else:
+            away_team_color_list.append(NEUTRAL_COLOR)
+            home_team_color_list.append(NEUTRAL_COLOR)
     return away_score_dict, home_score_dict, away_team_color_list, home_team_color_list
 
 
@@ -290,7 +344,7 @@ def make_pipeline_plot_matchup_scores(nfl_games_with_scores_df, week, user_picks
     """
     away_score_dict, home_score_dict, away_team_color_list, home_team_color_list = pipeline_make_matchup_dicts_team_color_logic(nfl_games_with_scores_df, week, user_picks_with_win_df)
     fig = make_plot_matchup_scores(away_score_dict, home_score_dict, away_team_color_list,
-                              home_team_color_list)
+                                   home_team_color_list)
     return fig
 
 
@@ -304,7 +358,7 @@ try:
     # User ID
     user_id = st.session_state["user_id"]
 
-    st.header("My !")
+    st.header("Analytics 📊")
 
     with st.spinner("Getting your picks..."):
         nfl_games_with_scored_df = make_database_games_with_scores_df()
@@ -317,23 +371,24 @@ try:
     games_played_this_week = len(nfl_games_with_scored_df)
     st.write("You've correctly chosen {} out of the {} games played this season".format(
         correct_picks, games_played_this_week))
-
+    fig1 = make_pipeline_plot_user_weeks_prediction_pct(user_id)
+    st.plotly_chart(fig1, use_container_width=True)
 
     for tab, week in zip(st.tabs(tab_name_list), tab_name_list):
         with tab:
             number_week = int(week.split(" ")[1])
             user_weekly_picks_df = user_games_with_scores_df[(user_games_with_scores_df["week"] ==
-                                                       number_week) & (user_games_with_scores_df["user_id"] ==user_id)]
+                                                              number_week) & (user_games_with_scores_df["user_id"] ==user_id)]
             correct_picks = sum(user_weekly_picks_df["correct_pick_flag"])
             games_played_this_week = len(nfl_games_with_scored_df[nfl_games_with_scored_df["week"] ==
-                                                               number_week])
+                                                                  number_week])
             st.write("You've correctly chosen {} out of the {} games played this week".format(
                 correct_picks, games_played_this_week))
 
 
-            fig = make_pipeline_plot_matchup_scores(nfl_games_with_scored_df, number_week,
-                                               user_picks_with_win_df)
-            st.plotly_chart(fig, use_container_width=True)
+            fig2 = make_pipeline_plot_matchup_scores(nfl_games_with_scored_df, number_week,
+                                                    user_picks_with_win_df)
+            st.plotly_chart(fig2, use_container_width=True)
 
 except KeyError:
     st.warning("You must login before accessing this page. Please authenticate via the login "
