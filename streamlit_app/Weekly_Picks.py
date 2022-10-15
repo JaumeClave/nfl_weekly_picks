@@ -670,6 +670,7 @@ def pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df
     return user_games_with_scores_df
 
 
+@st.cache(persist=True, show_spinner=False)
 def make_user_weekly_picks_df(user_id):
     """
     Function queries the user_weekly_picks table and returns a Pandas DataFrame for the specified users data
