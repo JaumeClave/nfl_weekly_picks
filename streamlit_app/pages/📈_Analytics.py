@@ -13,6 +13,8 @@ PASSWORD = st.secrets["PASSWORD"]
 DATABASE_NAME = st.secrets["DATABASE_NAME"]
 HOST = st.secrets["HOST"]
 PORT = st.secrets["PORT"]
+
+
 CORRECT_COLOR = "#41b45c"
 WRONG_COLOR = "#F05454"
 NEUTRAL_COLOR = "#EFEFEF"
@@ -369,8 +371,9 @@ try:
     user_weekly_picks_df = user_games_with_scores_df[user_games_with_scores_df["user_id"] ==user_id]
     correct_picks = sum(user_weekly_picks_df["correct_pick_flag"])
     games_played_this_week = len(nfl_games_with_scored_df)
-    st.write("You've correctly chosen {} out of the {} games played this season".format(
-        correct_picks, games_played_this_week))
+    pct_correct_picks = round(((correct_picks / games_played_this_week) * 100))
+    st.write("You've correctly chosen {} out of the {} games ({}%) played this season".format(
+        correct_picks, games_played_this_week, pct_correct_picks))
     fig1 = make_pipeline_plot_user_weeks_prediction_pct(user_id)
     st.plotly_chart(fig1, use_container_width=True)
 

@@ -17,6 +17,7 @@ PASSWORD = st.secrets["PASSWORD"]
 DATABASE_NAME = st.secrets["DATABASE_NAME"]
 HOST = st.secrets["HOST"]
 PORT = st.secrets["PORT"]
+
 NON_UNIQUE_USERNAME = "Username already exists. Please try again with a different one"
 NON_UNIQUE_EMAIL = "Email already exists. Please try again with a different one"
 USER_CREATION_SUCCESS_MESSAGE = "Successfully executed the command"
@@ -669,6 +670,24 @@ def pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df
     return user_games_with_scores_df
 
 
+def make_user_weekly_picks_df(user_id):
+    """
+    Function queries the user_weekly_picks table and returns a Pandas DataFrame for the specified users data
+    :param user_id: user_id key
+    :return: Dataframe
+    """
+    engine = create_engine("postgresql+psycopg2://" + USER + ":" + PASSWORD + "@" + HOST + "/" +
+                           DATABASE_NAME)
+    query = """
+         SELECT game_id, winning_pick
+         FROM user_weekly_picks
+         WHERE user_id=%(user_id)s
+         ;
+         """
+    user_weekly_picks_df = pd.read_sql_query(query, con=engine, params={"user_id": user_id})
+    return user_weekly_picks_df
+
+
 ##################################### STREAMLIT UI ###########################################
 
 
@@ -738,12 +757,39 @@ def make_game_day_and_countdown_ui(game_daytime):
         return False
 
 
-def make_column1_ui(game_started_flag):
+def make_away_home_checkbox_default_value(game_id, home_team, away_team, user_weekly_picks_df):
+    """
+
+    :param game_id:
+    :param home_team:
+    :param away_team:
+    :param user_weekly_picks_df:
+    :return:
+    """
+    if game_id in list(user_weekly_picks_df["game_id"]):
+        user_winning_pick_team = user_weekly_picks_df[user_weekly_picks_df["game_id"] == game_id]["winning_pick"].iloc[0]
+        if user_winning_pick_team == away_team:
+            away_team_checkbox_value = True
+            home_team_checkbox_value = False
+        elif user_winning_pick_team == home_team:
+            away_team_checkbox_value = False
+            home_team_checkbox_value = True
+    else:
+        away_team_checkbox_value = False
+        home_team_checkbox_value = True
+    return away_team_checkbox_value, home_team_checkbox_value
+
+
+
+
+
+def make_column1_ui(game_started_flag, away_team_checkbox_value):
     """
     Function creates the logic and UI for column1
     """
     st.subheader("")
-    if st.checkbox(away_team + " to win!", disabled=game_started_flag):
+    if st.checkbox(away_team + " to win!", value=away_team_checkbox_value,
+                   disabled=game_started_flag):
         add_values_in_dict(weekly_picks_dict, game_id, [away_team])
         checkbox_select_double_win_list.append(1)
     logo_away = make_team_logo_image(away_team)
@@ -765,12 +811,13 @@ def make_column2_ui():
                                              close=END_PARAGRAPH_HTML), unsafe_allow_html=True)
 
 
-def make_column3_ui(game_started_flag):
+def make_column3_ui(game_started_flag, home_team_checkbox_value):
     """
     Function creates the logic and UI for column3
     """
     st.subheader("")
-    if st.checkbox(home_team + " to win!", disabled=game_started_flag):
+    if st.checkbox(home_team + " to win!", value=home_team_checkbox_value,
+                   disabled=game_started_flag):
         add_values_in_dict(weekly_picks_dict, game_id, [home_team])
         checkbox_select_double_win_list.append(1)
     logo_home = make_team_logo_image(home_team)
@@ -823,6 +870,8 @@ try:
         pipeline_make_insert_into_nfl_game_scores_2022_table(yearly_schedule_2022_df)
         user_games_with_scores_df = make_games_with_scores_df()
         user_games_with_scores_df = pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df)
+        user_weekly_picks_df = make_user_weekly_picks_df(user_id)
+
 
     # Get current NFL week number
     current_nfl_week_number = make_current_nfl_week_number(yearly_schedule_2022_df)
@@ -844,14 +893,21 @@ try:
     for i in range(len(all_matchup_list)):
         game_day, game_id, home_team, away_team = make_gameday_gameid_home_away(all_matchup_list)
         game_started_flag = make_game_day_and_countdown_ui(game_day)
+
+
+        away_team_checkbox_value, home_team_checkbox_value = \
+            make_away_home_checkbox_default_value(game_id, home_team, away_team, user_weekly_picks_df)
+
+
+
         checkbox_select_double_win_list = list()
         c1, c2, c3 = st.columns((1, 3, 1))
         with c1:
-            make_column1_ui(game_started_flag)
+            make_column1_ui(game_started_flag, away_team_checkbox_value)
         with c2:
             make_column2_ui()
         with c3:
-            make_column3_ui(game_started_flag)
+            make_column3_ui(game_started_flag, home_team_checkbox_value)
         make_warning_two_team_matchup_win_selected()
         st.markdown("""---""")
 
