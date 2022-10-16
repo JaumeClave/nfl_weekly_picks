@@ -860,7 +860,7 @@ con, cursor = connect_to_postgres_database(USER, PASSWORD, DATABASE_NAME, HOST, 
 try:
     # User ID
     user_id = st.session_state["user_id"]
-
+    st.write(user_id)
     # Streamlit - Title
     st.markdown("{open}NFL Weekly Picks 🏈{close}".format(open=START_HEADER_CENTERED_HTML,
                                                   close=END_HEADER_HTML_HTML), unsafe_allow_html=True)
