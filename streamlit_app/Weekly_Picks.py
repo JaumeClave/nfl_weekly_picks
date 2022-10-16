@@ -744,6 +744,7 @@ def login_and_signup_ui_app():
                 pipeline_make_insert_into_nfl_game_scores_2022_table(yearly_schedule_2022_df)
                 user_games_with_scores_df = make_games_with_scores_df()
                 user_games_with_scores_df = pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df)
+            return yearly_schedule_2022_df
             st.experimental_rerun()
     # SignUp UI
     elif choice == "SignUp":
@@ -762,7 +763,7 @@ def login_and_signup_ui_app():
             elif user_creation_statement is None:
                 st.success("You have successfully created a valid Account")
                 st.info("Go to Login Menu to login")
-    return yearly_schedule_2022_df
+    return None
 
 
 def make_game_day_and_countdown_ui(game_daytime):
