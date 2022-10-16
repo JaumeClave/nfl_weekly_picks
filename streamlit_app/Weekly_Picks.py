@@ -859,7 +859,6 @@ con, cursor = connect_to_postgres_database(USER, PASSWORD, DATABASE_NAME, HOST, 
 try:
     # User ID
     user_id = st.session_state["user_id"]
-    st.write(user_id)
     # Streamlit - Title
     st.markdown("{open}NFL Weekly Picks 🏈{close}".format(open=START_HEADER_CENTERED_HTML,
                                                   close=END_HEADER_HTML_HTML), unsafe_allow_html=True)
@@ -870,9 +869,7 @@ try:
         pipeline_make_insert_into_nfl_game_scores_2022_table(yearly_schedule_2022_df)
         user_games_with_scores_df = make_games_with_scores_df()
         user_games_with_scores_df = pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df)
-
     user_weekly_picks_df = make_user_weekly_picks_df(user_id)
-    st.dataframe(user_weekly_picks_df)
 
     # Get current NFL week number
     current_nfl_week_number = make_current_nfl_week_number(yearly_schedule_2022_df)
