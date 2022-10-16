@@ -873,8 +873,6 @@ try:
         user_games_with_scores_df = pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df)
         user_weekly_picks_df = make_user_weekly_picks_df(user_id)
 
-    st.dataframe(user_weekly_picks_df)
-
     # Get current NFL week number
     current_nfl_week_number = make_current_nfl_week_number(yearly_schedule_2022_df)
 
@@ -894,7 +892,6 @@ try:
     weekly_picks_dict = dict()
     for i in range(len(all_matchup_list)):
         game_day, game_id, home_team, away_team = make_gameday_gameid_home_away(all_matchup_list)
-        st.write(game_id)
         game_started_flag = make_game_day_and_countdown_ui(game_day)
         away_team_checkbox_value, home_team_checkbox_value = \
             make_away_home_checkbox_default_value(game_id, home_team, away_team, user_weekly_picks_df)
