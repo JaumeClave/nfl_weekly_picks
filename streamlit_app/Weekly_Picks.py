@@ -784,12 +784,12 @@ def make_game_day_and_countdown_ui(game_daytime):
         return False
 
 
-def make_column1_ui(game_started_flag, away_team_checkbox_value):
+def make_column1_ui(game_started_flag, ):
     """
     Function creates the logic and UI for column1
     """
     st.subheader("")
-    if st.checkbox(away_team + " to win!", value=away_team_checkbox_value,
+    if st.checkbox(away_team + " to win!",
                    disabled=game_started_flag):
         add_values_in_dict(weekly_picks_dict, game_id, [away_team])
         checkbox_select_double_win_list.append(1)
@@ -812,12 +812,12 @@ def make_column2_ui():
                                              close=END_PARAGRAPH_HTML), unsafe_allow_html=True)
 
 
-def make_column3_ui(game_started_flag, home_team_checkbox_value):
+def make_column3_ui(game_started_flag, ):
     """
     Function creates the logic and UI for column3
     """
     st.subheader("")
-    if st.checkbox(home_team + " to win!", value=home_team_checkbox_value,
+    if st.checkbox(home_team + " to win!",
                    disabled=game_started_flag):
         add_values_in_dict(weekly_picks_dict, game_id, [home_team])
         checkbox_select_double_win_list.append(1)
@@ -901,12 +901,12 @@ try:
         c1, c2, c3 = st.columns((1, 3, 1))
         with c1:
             st.write(away_team_checkbox_value)
-            make_column1_ui(game_started_flag, away_team_checkbox_value)
+            make_column1_ui(game_started_flag)
         with c2:
             make_column2_ui()
         with c3:
             st.write(home_team_checkbox_value)
-            make_column3_ui(game_started_flag, home_team_checkbox_value)
+            make_column3_ui(game_started_flag)
         make_warning_two_team_matchup_win_selected()
         st.markdown("""---""")
 
