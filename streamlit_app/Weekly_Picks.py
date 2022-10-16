@@ -670,7 +670,6 @@ def pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df
     return user_games_with_scores_df
 
 
-@st.cache(persist=True, show_spinner=False)
 def make_user_weekly_picks_df(user_id):
     """
     Function queries the user_weekly_picks table and returns a Pandas DataFrame for the specified users data
@@ -871,8 +870,8 @@ try:
         pipeline_make_insert_into_nfl_game_scores_2022_table(yearly_schedule_2022_df)
         user_games_with_scores_df = make_games_with_scores_df()
         user_games_with_scores_df = pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df)
-        user_weekly_picks_df = make_user_weekly_picks_df(user_id)
 
+    user_weekly_picks_df = make_user_weekly_picks_df(user_id)
     st.dataframe(user_weekly_picks_df)
 
     # Get current NFL week number
