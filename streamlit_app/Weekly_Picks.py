@@ -898,10 +898,12 @@ try:
         checkbox_select_double_win_list = list()
         c1, c2, c3 = st.columns((1, 3, 1))
         with c1:
+            st.write(away_team_checkbox_value)
             make_column1_ui(game_started_flag, away_team_checkbox_value)
         with c2:
             make_column2_ui()
         with c3:
+            st.write(home_team_checkbox_value)
             make_column3_ui(game_started_flag, home_team_checkbox_value)
         make_warning_two_team_matchup_win_selected()
         st.markdown("""---""")
