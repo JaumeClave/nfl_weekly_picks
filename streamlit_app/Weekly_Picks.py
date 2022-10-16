@@ -873,6 +873,8 @@ try:
         user_games_with_scores_df = pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df)
         user_weekly_picks_df = make_user_weekly_picks_df(user_id)
 
+    st.dataframe(user_weekly_picks_df)
+
     # Get current NFL week number
     current_nfl_week_number = make_current_nfl_week_number(yearly_schedule_2022_df)
 
