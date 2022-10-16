@@ -762,7 +762,7 @@ def login_and_signup_ui_app():
             elif user_creation_statement is None:
                 st.success("You have successfully created a valid Account")
                 st.info("Go to Login Menu to login")
-    return None
+    return yearly_schedule_2022_df
 
 
 def make_game_day_and_countdown_ui(game_daytime):
@@ -910,4 +910,4 @@ try:
         make_submit_weekly_picks_button()
 
 except KeyError:
-    login_and_signup_ui_app()
+    yearly_schedule_2022_df = login_and_signup_ui_app()
