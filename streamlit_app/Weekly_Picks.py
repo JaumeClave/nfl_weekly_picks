@@ -738,14 +738,7 @@ def login_and_signup_ui_app():
                     st.session_state["user_id"] = id
             else:
                 st.error("Incorrect Username/Password")
-                # Get yearly schedule
-            with st.spinner('Getting the 2022 NFL schedule...'):
-                yearly_schedule_2022_df = make_yearly_schedule(2022)
-                pipeline_make_insert_into_nfl_game_scores_2022_table(yearly_schedule_2022_df)
-                user_games_with_scores_df = make_games_with_scores_df()
-                user_games_with_scores_df = pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df)
             st.experimental_rerun()
-            return yearly_schedule_2022_df
     # SignUp UI
     elif choice == "SignUp":
         st.subheader("Create New Account")
@@ -870,6 +863,12 @@ try:
     st.markdown("{open}NFL Weekly Picks 🏈{close}".format(open=START_HEADER_CENTERED_HTML,
                                                   close=END_HEADER_HTML_HTML), unsafe_allow_html=True)
 
+    # Get yearly schedule
+    with st.spinner('Getting the 2022 NFL schedule...'):
+        yearly_schedule_2022_df = make_yearly_schedule(2022)
+        pipeline_make_insert_into_nfl_game_scores_2022_table(yearly_schedule_2022_df)
+        user_games_with_scores_df = make_games_with_scores_df()
+        user_games_with_scores_df = pipeline_make_insert_into_user_winning_picks_table(user_games_with_scores_df)
     user_weekly_picks_df = make_user_weekly_picks_df(user_id)
 
     # Get current NFL week number
@@ -911,4 +910,4 @@ try:
         make_submit_weekly_picks_button()
 
 except KeyError:
-    yearly_schedule_2022_df = login_and_signup_ui_app()
+    login_and_signup_ui_app()
