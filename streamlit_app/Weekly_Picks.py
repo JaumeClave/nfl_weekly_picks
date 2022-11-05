@@ -18,6 +18,9 @@ DATABASE_NAME = st.secrets["DATABASE_NAME"]
 HOST = st.secrets["HOST"]
 PORT = st.secrets["PORT"]
 
+
+
+
 NON_UNIQUE_USERNAME = "Username already exists. Please try again with a different one"
 NON_UNIQUE_EMAIL = "Email already exists. Please try again with a different one"
 USER_CREATION_SUCCESS_MESSAGE = "Successfully executed the command"
