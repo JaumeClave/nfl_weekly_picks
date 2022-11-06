@@ -97,7 +97,7 @@ def make_pct_correct_by_week_plot(pct_correct_by_week_df):
         temp_df = pct_correct_by_week_df[pct_correct_by_week_df["username"] == username]
         fig.add_trace(go.Scatter(x=list(temp_df["week"]), y=list(temp_df["pct_correct"]), name=username, line_shape='linear'))
     fig.update_layout(template="plotly_dark", xaxis_title="Week")
-    fig.update_yaxes(tickformat="%")
+    fig.update_yaxes(tickformat=".%")
     return fig
 
 
@@ -111,16 +111,12 @@ def make_pipeline_pct_correct_by_week():
     return fig
 
 
+######################################### RUN #######################################
+
+
 st.header("Leaderboard 🥇")
 
 st.dataframe(make_leaderboard_df().style.format({"pct_correct" : '{:.1f}%'}))
-
-
-
-st.header("")
-
-st.subheader("Head-to-Head")
-st.write("Use this section to compare yourself to another user")
 
 st.plotly_chart(make_pipeline_pct_correct_by_week(), use_container_width=True)
 
