@@ -15,8 +15,6 @@ HOST = st.secrets["HOST"]
 PORT = st.secrets["PORT"]
 
 
-
-
 CORRECT_COLOR = "#41b45c"
 WRONG_COLOR = "#F05454"
 NEUTRAL_COLOR = "#EFEFEF"
