@@ -114,16 +114,15 @@ def make_pipeline_pct_correct_by_week():
 ######################################### RUN #######################################
 
 try:
-    c1, c2, c3 = st.columns([0.5, 3, 0.5])
-    with c2:
-        # User ID
-        user_id = st.session_state["user_id"]
 
-        st.header("Leaderboard 🥇")
+    # User ID
+    user_id = st.session_state["user_id"]
 
-        st.dataframe(make_leaderboard_df().style.format({"pct_correct" : '{:.1f}%'}))
+    st.header("Leaderboard 🥇")
 
-        st.plotly_chart(make_pipeline_pct_correct_by_week(), use_container_width=True)
+    st.dataframe(make_leaderboard_df().style.format({"pct_correct" : '{:.1f}%'}))
+
+    st.plotly_chart(make_pipeline_pct_correct_by_week(), use_container_width=True)
 
 except KeyError:
     st.warning("You must login before accessing this page. Please authenticate via the login "
