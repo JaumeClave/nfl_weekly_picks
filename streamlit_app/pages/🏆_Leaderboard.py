@@ -114,8 +114,8 @@ def make_pipeline_pct_correct_by_week():
 ######################################### RUN #######################################
 
 try:
-    c1, c2, c3, c4, c5 = st.columns(5)
-    with c3:
+    c1, c2, c3 = st.columns(3)
+    with c2:
         # User ID
         user_id = st.session_state["user_id"]
 
